@@ -1,48 +1,54 @@
 import { useParams } from 'react-router';
 // import { companies } from '../lib/fake-data';
-import { getCompany } from '../lib/graphql/queries';
+import { companyByIdQuery, getCompany } from '../lib/graphql/queries';
 import { useState, useEffect } from 'react';
 import JobList from '../components/JobList';
+import { useQuery } from '@apollo/client';
+import { useCompany } from '../lib/graphql/hooks';
 
 function CompanyPage() {
   const { companyId } = useParams();
 
-  const [state, setState] = useState({
-    companyDetails: null,
-    loading: true,
-    error: false,
-  });
+  const { company, loading, error } = useCompany(companyId);
 
-  const getCompanyDetails = async () => {
-    try {
-      const companyDetails = await getCompany(companyId);
-      setState({ companyDetails, loading: false, error: false });
-    } catch (error) {
-      console.log('error', error);
-      setState({ companyDetails: null, loading: false, error: true });
-    }
-  };
+  // const [state, setState] = useState({
+  //   companyDetails: null,
+  //   loading: true,
+  //   error: false,
+  // });
 
-  useEffect(() => {
-    getCompanyDetails();
-  }, [companyId]);
+  // const getCompanyDetails = async () => {
+  //   try {
+  //     const companyDetails = await getCompany(companyId);
+  //     setState({ companyDetails, loading: false, error: false });
+  //   } catch (error) {
+  //     console.log('error', error);
+  //     setState({ companyDetails: null, loading: false, error: true });
+  //   }
+  // };
 
-  if (state.loading) {
+  // useEffect(() => {
+  //   getCompanyDetails();
+  // }, [companyId]);
+
+  if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (state.error) {
+  if (error) {
     return <div>Data Unavailable</div>;
   }
+
+  // console.log('dda', data, loading, error);
 
   // const company = companies.find((company) => company.id === companyId);
   return (
     <div>
-      <h1 className="title">{state.companyDetails.name}</h1>
-      <div className="box">{state.companyDetails.description}</div>
+      <h1 className="title">{company.name}</h1>
+      <div className="box">{company.description}</div>
 
-      <h2 className="title is-5">Jobs at {state.companyDetails.name}</h2>
-      <JobList jobs={state.companyDetails.jobs} />
+      <h2 className="title is-5">Jobs at {company.name}</h2>
+      <JobList jobs={company.jobs} />
     </div>
   );
 }

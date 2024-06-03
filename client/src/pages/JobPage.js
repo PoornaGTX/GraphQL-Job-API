@@ -3,23 +3,30 @@ import { Link } from 'react-router-dom';
 import { formatDate } from '../lib/formatters';
 import { useEffect, useState } from 'react';
 import { getJob } from '../lib/graphql/queries';
+import { useJob } from '../lib/graphql/hooks';
 
 function JobPage() {
   const { jobId } = useParams();
 
-  const [job, setJob] = useState();
+  const { job, loading, error } = useJob(jobId);
 
-  const getJobData = async () => {
-    const job = await getJob(jobId);
-    setJob(job);
-  };
+  // const [job, setJob] = useState();
 
-  useEffect(() => {
-    getJobData();
-  }, [jobId]);
+  // const getJobData = async () => {
+  //   const job = await getJob(jobId);
+  //   setJob(job);
+  // };
 
-  if (!job) {
+  // useEffect(() => {
+  //   getJobData();
+  // }, [jobId]);
+
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Data Unavailable</div>;
   }
 
   // const job = jobs.find((job) => job.id === jobId);
