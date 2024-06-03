@@ -59,6 +59,9 @@ export const resolvers = {
   Job: {
     // becuase in jon there is no data column, there is only createdAt colum, we etraxt that data and asign into date column.
     company: (job, _args, { companyLoader }) => {
+      if (!companyLoader) {
+        throw new Error('companyLoader is undefined');
+      }
       return companyLoader.load(job.companyId);
     },
     date: (job) => toIsoDate(job.createdAt),

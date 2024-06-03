@@ -22,9 +22,8 @@ const getContext = async ({ req }) => {
   const context = { companyLoader };
   if (req.auth) {
     context.user = await getUser(req.auth.sub);
-    return { user };
   }
-  return { context };
+  return context;
 };
 
 const apolloserver = new ApolloServer({
